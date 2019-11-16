@@ -38,12 +38,12 @@
           <!-- Begin Personal Information -->
           <div class="self">
             <h1 class="name">{{ name }} <br />
-              <span>Interactive Designer</span></h1>
+              <span>{{ Department }}</span></h1>
             <ul>
               <!--<li class="ad">111 Lorem Street, 34785, Ipsum City</li>-->
-              <li class="mail">johnsmith@business.com</li>
-              <li class="tel">+11 444 555 22 33</li>
-              <li class="web">www.businessweb.com</li>
+              <li class="mail">{{ Email }}</li>
+              <li class="tel">{{ Phone_No }}</li>
+              <li class="web">{{ Website }}</li>
             </ul>
           </div>
           <!-- End Personal Information -->
@@ -62,7 +62,7 @@
         <!-- Begin 1st Row -->
         <div class="entry">
           <h2>About Me</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dignissim viverra nibh sed varius. Proin bibendum nunc in sem ultrices posuere. Aliquam ut aliquam lacus.</p>
+          <p>{{ About_me }}</p>
         </div>
         <!-- End 1st Row -->
 
@@ -71,7 +71,7 @@
         <div class="entry">
           <h2>Research Key Areas</h2>
           <ul class="info">
-              <li>Vestibulum eu ante massa, sed rhoncus velit.</li>
+              <li>{{ Research_area }}</li>
               <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
             </ul>
         </div>
@@ -197,7 +197,13 @@
 
 	<div class='entry'>
 		<div class="button">
-			<button type="button" onclick="window.location='leaveapplication.html';">Leave Applications</button>
+			<button type="button" onclick="location.href = 'leaveapplication';">Leave Applications</button>
+		</div>
+	</div>
+
+	<div class='entry'>
+		<div class="button">
+			<button type="button" onclick="location.href = 'logout';">Logout</button>
 		</div>
 	</div>
 

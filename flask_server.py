@@ -134,7 +134,7 @@ def dashboard():
     faculty = facultys.find_one({'Email': current_user.useremail})
     if faculty is None:
         return "No Faculty Portal Found"
-    return render_template('index.html', name=faculty['Name'], form=form)
+    return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],form=form)
 
 @app.route('/logout', methods = ['GET'])
 @login_required
