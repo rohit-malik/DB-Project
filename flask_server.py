@@ -137,13 +137,15 @@ def dashboard():
     return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],form=form)
 
 
-@app.route('/editinfo')
+@app.route('/editinfo', methods=['POST'])
 @login_required
 def editinfo():
     form = FacultyDetails()
     faculty = facultys.find_one({'Email': current_user.useremail})
     if faculty is None:
         return "No Faculty Portal Found"
+    if request.method == 'POST':
+        request.form['']
     return render_template('editinfo.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],form=form)
 
 @app.route('/logout', methods = ['GET'])
