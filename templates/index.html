@@ -3,15 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Resume</title>
-<link type="text/css" rel="stylesheet" href="css/blue.css" />
-<link type="text/css" rel="stylesheet" href="css/print.css" media="print"/>
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/blue.css') }}"/>
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}" media="print"/>
 <!--[if IE 7]>
 <link href="css/ie7.css" rel="stylesheet" type="text/css" />
 <![endif]-->
 <!--[if IE 6]>
 <link href="css/ie6.css" rel="stylesheet" type="text/css" />
 <![endif]-->
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.4.2.min.js') }}" ></script>
 <script type="text/javascript" src="js/jquery.tipsy.js"></script>
 <script type="text/javascript" src="js/cufon.yui.js"></script>
 <script type="text/javascript" src="js/scrollTo.js"></script>
@@ -76,7 +76,7 @@
             </ul>
         </div>
         <!-- End temp Row -->
-        
+
 
 
 	<!-- Begin temp Row -->

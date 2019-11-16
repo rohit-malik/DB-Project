@@ -130,7 +130,7 @@ def login():
 @login_required
 def dashboard():
     form = FacultyDetails()
-    return render_template('dashboard.html', name=current_user.useremail, form=form)
+    return render_template('index.html', name=current_user.useremail, form=form)
 
 @app.route('/logout', methods = ['GET'])
 @login_required
