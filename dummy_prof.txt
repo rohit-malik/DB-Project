@@ -1,0 +1,9 @@
+{
+  "Name": "Dr. Amit Kumar Roy",
+  "Department": "Chudakad Dept of Eduction",
+  "Email": "amit@land.com",
+  "Phone-No": "maa-chudao- nhi deraha",
+  "Website": "www.88888.com",
+  "About-me": "Always been chutiya",
+  "Research-area": ["Neural Networks", "Chutiyapa"]
+}

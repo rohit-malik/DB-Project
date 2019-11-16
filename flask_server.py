@@ -28,6 +28,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 users = mongo.db.User_Auth
+facultys = mongo.db.Faculty_profile
 
 @app.route("/")
 def documentation():
@@ -130,7 +131,10 @@ def login():
 @login_required
 def dashboard():
     form = FacultyDetails()
-    return render_template('index.html', name=current_user.useremail, form=form)
+    faculty = facultys.find_one({'Email': current_user.useremail})
+    if faculty is None:
+        return "No Faculty Portal Found"
+    return render_template('index.html', name=faculty['Name'], form=form)
 
 @app.route('/logout', methods = ['GET'])
 @login_required
