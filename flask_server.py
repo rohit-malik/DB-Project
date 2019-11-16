@@ -1,8 +1,10 @@
 import json
+import os
 from flask import Flask, render_template, request, redirect, url_for , send_from_directory
 from flask_mongoengine import MongoEngine, Document
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import TextField
+from wtforms import StringField, PasswordField , DateField
 from wtforms.validators import Email, Length, InputRequired
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -25,7 +27,9 @@ login_manager.login_view = 'login'
 @app.route("/")
 def documentation():
     #return "Hello World"
-    return send_from_directory("/home/rohit/DataBase_Project/","documentation.txt")
+    #print(os.getcwd())
+    return send_from_directory(os.getcwd(),"documentation.txt")
+    #return send_from_directory("/home/rohit/DataBase_Project/","documentation.txt")
 
 class User(UserMixin, db.Document):
     meta = {'collection': 'User_Auth'}
@@ -41,6 +45,24 @@ class RegForm(FlaskForm):
     email = StringField('email',  validators=[InputRequired(), Email(message='Invalid email'), Length(max=30)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=20)])
 
+
+class FacultyDetails(FlaskForm):
+    #name = TextField("Name")
+    name = StringField('name', validators=[InputRequired(), Length(max=30)])
+    email = StringField('email',  validators=[InputRequired(), Email(message='Invalid email'), Length(max=30)])
+    dob = DateField('dob', validators=[InputRequired(), Length(max=30)])
+    publications = StringField('publications', validators=[InputRequired(), Length(max=30)])
+    biography = StringField('biography', validators=[InputRequired(), Length(max=30)])
+    about = StringField('about', validators=[InputRequired(), Length(max=30)])
+    teachinginterest = StringField('name', validators=[InputRequired(), Length(max=30)])
+    projects = StringField('projects', validators=[InputRequired(), Length(max=30)])
+    biography = StringField('biography', validators=[InputRequired(), Length(max=30)])
+    researchkeywords = StringField('researchkeywords', validators=[InputRequired(), Length(max=30)])
+    researchwork = StringField('researchwork', validators=[InputRequired(), Length(max=30)])
+    awards = StringField('awards', validators=[InputRequired(), Length(max=30)])
+    
+    
+    
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegForm()
@@ -72,7 +94,8 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', name=current_user.email)
+    form = FacultyDetails()
+    return render_template('dashboard.html', name=current_user.email, form=form)
 
 @app.route('/logout', methods = ['GET'])
 @login_required

@@ -1,3 +1,42 @@
 <h1>Dashboard</h1>
 <p>You are currently logged in as {{ name }}</p>
+<p>To edit the personal details please submit your details.</p>
+
+<form action="/login" method="post">
+  <p>Name</p>
+  {{ form.name }}  
+<br>
+  <p>Email</p>
+  {{ form.email }}  
+<br>
+  <p>dob</p>
+  {{ form.dob }}  
+<br>
+  <p>publications</p>
+  {{ form.publications }}  
+<br>
+  <p>biography</p>
+  {{ form.biography }}  
+<br>
+  <p>about</p>
+  {{ form.about }}  
+<br>
+  <p>projects</p>
+  {{ form.projects }}  
+<br>
+  <p>biography</p>
+  {{ form.biography }}  
+<br>
+  <p>researchkeywords</p>
+  {{ form.researchkeywords }}  
+<br>
+  <p>researchwork</p>
+  {{ form.researchwork }}  
+<br>
+  <p>awards</p>
+  {{ form.awards }}    
+  <br>
+  <input type="submit" value="Submit">
+</form>
+
 <a href='logout'>Logout</a>
