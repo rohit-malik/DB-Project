@@ -31,19 +31,25 @@
     <div id="paper">
       <div class="paper-top"></div>
       <div id="paper-mid">
+<form action=/editinfo method='POST'>
         <div class="entry">
           <!-- Begin Image -->
           <img class="portrait" src="{{ url_for('static', filename='images/image.jpg') }}" alt="John Smith" />
           <!-- End Image -->
           <!-- Begin Personal Information -->
           <div class="self">
-            <h1 class="name">{{ name }} <br />
-              <span>{{ Department }}</span></h1>
+              <input lable='Name' style="width:60%; height:10%; type="text" class="name" value="{{name}}"><br>
+	      <!--<h1 class="name">{{ name }} <br />
+              <span>{{ Department }}</span></h1>-->
+              Department: <input style="width:60%; height:10%; type="text" class="name" value="{{Department}}"><br>
             <ul>
               <!--<li class="ad">111 Lorem Street, 34785, Ipsum City</li>-->
-              <li class="mail">{{ Email }}</li>
+              Email: <input style="width:60%; height:10%; type="text" class="name" value="{{Email}}"><br>
+	      Phone_No: <input style="width:60%; height:10%; type="text" class="name" value="{{Phone_No}}"><br>
+              Website: <input style="width:60%; height:10%; type="text" class="name" value="{{Website}}"><br>
+	      <!--<li class="mail">{{ Email }}</li>
               <li class="tel">{{ Phone_No }}</li>
-              <li class="web">{{ Website }}</li>
+              <li class="web">{{ Website }}</li>-->
             </ul>
           </div>
           <!-- End Personal Information -->
@@ -62,7 +68,8 @@
         <!-- Begin 1st Row -->
         <div class="entry">
           <h2>About Me</h2>
-          <p>{{ About_me }}</p>
+          <input style="width:60%; height:10%; type="text" class="name" value="{{About_me}}"><br>
+	   <!--<p>{{ About_me }}</p>-->
         </div>
         <!-- End 1st Row -->
 
@@ -71,8 +78,9 @@
         <div class="entry">
           <h2>Research Key Areas</h2>
           <ul class="info">
-              <li>{{ Research_area }}</li>
-              <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
+		<input style="width:60%; height:10%; type="text" class="name" value="{{Research_area}}"><br>
+              <!--<li>{{ Research_area }}</li>
+              <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>-->
             </ul>
         </div>
         <!-- End temp Row -->
@@ -209,7 +217,7 @@
 
 	<div class='entry'>
 		<div class="button">
-			<button type="button" onclick="location.href = 'editinfo';">EditProfile</button>
+			<input type="submit" value='Savechanges'</button>
 		</div>
 	</div>
 
@@ -258,6 +266,7 @@
         	</ul>
         </div>
         <!-- Begin 5th Row -->
+</form>
       </div>
       <div class="clear"></div>
       <div class="paper-bottom"></div>
