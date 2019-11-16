@@ -8,21 +8,26 @@ from wtforms import StringField, PasswordField , DateField
 from wtforms.validators import Email, Length, InputRequired
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 
-app.config['MONGODB_SETTINGS'] = {
-    'db': 'faculty_auth',
-    'host': 'mongodb://localhost:27017/faculty_auth'
-}
+# app.config['MONGODB_SETTINGS'] = {
+#     'db': 'faculty_auth',
+#     'host': 'mongodb://localhost:27017/faculty_auth'
+# }
 
+app.config['MONGO_DBNAME'] = 'faculty_auth'
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/faculty_auth'
 app.config['SECRET_KEY'] = 'hello'
 
-db = MongoEngine(app)
+mongo = PyMongo(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+users = mongo.db.User_Auth
 
 @app.route("/")
 def documentation():
@@ -31,14 +36,35 @@ def documentation():
     return send_from_directory(os.getcwd(),"documentation.txt")
     #return send_from_directory("/home/rohit/DataBase_Project/","documentation.txt")
 
-class User(UserMixin, db.Document):
-    meta = {'collection': 'User_Auth'}
-    email = db.StringField(max_length=30)
-    password = db.StringField()
+# class User(UserMixin, mongo.db.Document):
+#     meta = {'collection': 'User_Auth'}
+#     email = mongo.db.StringField(max_length=30)
+#     password = mongo.db.StringField()
+
+class User():
+
+    def __init__(self, useremail):
+        self.useremail = useremail
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.useremail
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.objects(pk=user_id).first()
+    user = users.find_one({'email': user_id})
+    if not user:
+        return None
+    return User(user['email'])
+    # return User.objects(pk=user_id).first()
 
 
 class RegForm(FlaskForm):
@@ -60,21 +86,29 @@ class FacultyDetails(FlaskForm):
     researchkeywords = StringField('researchkeywords', validators=[InputRequired(), Length(max=30)])
     researchwork = StringField('researchwork', validators=[InputRequired(), Length(max=30)])
     awards = StringField('awards', validators=[InputRequired(), Length(max=30)])
-    
-    
-    
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegForm()
     if request.method == 'POST':
         if form.validate():
-            existing_user = User.objects(email=form.email.data).first()
+            # existing_user = User.objects(email=form.email.data).first()
+            existing_user = users.find_one({'email': form.email.data})
             if existing_user is None:
                 hashpass = generate_password_hash(form.password.data, method='sha256')
-                hey = User(form.email.data,hashpass).save()
-                login_user(hey)
+                # hey = User(form.email.data,hashpass).save()
+                user_id = users.insert({
+                    'email': form.email.data,
+                    'password': hashpass
+                })
+                hey = users.find_one({'_id': user_id})
+                user = User(hey['email'])
+                login_user(user)
                 return redirect(url_for('dashboard'))
     return render_template('register.html', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -83,10 +117,11 @@ def login():
     form = RegForm()
     if request.method == 'POST':
         if form.validate():
-            check_user = User.objects(email=form.email.data).first()
+            # check_user = User.objects(email=form.email.data).first()
+            check_user = users.find_one({'email': form.email.data})
             if check_user:
                 if check_password_hash(check_user['password'], form.password.data):
-                    login_user(check_user)
+                    login_user(User(check_user['email']))
                     return redirect(url_for('dashboard'))
     return render_template('login.html', form=form)
 
@@ -95,7 +130,7 @@ def login():
 @login_required
 def dashboard():
     form = FacultyDetails()
-    return render_template('dashboard.html', name=current_user.email, form=form)
+    return render_template('dashboard.html', name=current_user.useremail, form=form)
 
 @app.route('/logout', methods = ['GET'])
 @login_required
