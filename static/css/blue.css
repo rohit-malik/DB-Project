@@ -683,6 +683,13 @@ input {
 	outline: none;
 }
 
+input.submitprofile {
+	width:150px;
+	float:right;
+	height:50px;
+	margin-bottom:10px;
+}
+
 input[type=label] {
 	width:300px;
 	float:right;

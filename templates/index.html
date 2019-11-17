@@ -38,13 +38,13 @@
           <!-- End Image -->
           <!-- Begin Personal Information -->
           <div class="self">
-            <h1 class="name">{{ name }} <br />
-              <span>{{ Department }}</span></h1>
+            <h1 class="name">{{ fp.name }} <br />
+              <span>{{ fp.department }}</span></h1>
             <ul>
               <!--<li class="ad">111 Lorem Street, 34785, Ipsum City</li>-->
-              <li class="mail">{{ Email }}</li>
-              <li class="tel">{{ Phone_No }}</li>
-              <li class="web">{{ Website }}</li>
+              <li class="mail">{{ fp.email }}</li>
+              <li class="tel">{{ fp.phone_no }}</li>
+              <li class="web">{{ fp.website }}</li>
             </ul>
           </div>
           <!-- End Personal Information -->
@@ -72,8 +72,11 @@
         <div class="entry">
           <h2>Research Key Areas</h2>
           <ul class="info">
-              <li>{{ Research_area }}</li>
-              <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
+              {%for i in range(0, fp.len_ra)%} 
+		    <li>{{fp.research_area[i]}}</li> 
+	      {%endfor%} 
+              <!--<li>{{ Research_area }}</li>
+              <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>-->
             </ul>
         </div>
         <!-- End temp Row -->
@@ -84,8 +87,9 @@
         <div class="entry">
           <h2>Current Research interests</h2>
           <ul class="info">
-              <li>Vestibulum eu ante massa, sed rhoncus velit.</li>
-              <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
+              {%for i in range(0, fp.len_cri)%} 
+		    <li>{{fp.current_research_interest[i]}}</li> 
+	      {%endfor%}
             </ul>
         </div>
         <!-- End temp Row -->
@@ -93,7 +97,19 @@
 	<!-- Begin 2nd Row -->
         <div class="entry">
           <h2>Education</h2>
-          <div class="content">
+          
+	  {% for i in range(0, fp.len_eaw) %}
+              {% set lst = fp.education_work[i].split('%%') %}
+	      {% set date = lst[0] %}
+	      {% set university = lst[1] %}
+	      {% set degree = lst[2] %}
+              <div class="content">
+              <h3> {{ date }} </h3>
+              <p> {{ university }} <br />
+                <em> {{ degree }} </em></p>
+	      </div> 
+	  {%endfor%}
+	<!--<div class="content">
             <h3>Sep 2005 - Feb 2007</h3>
             <p>Academy of Art University, London <br />
               <em>Master in Communication Design</em></p>
@@ -102,13 +118,24 @@
             <h3>Sep 2001 - Jun 2005</h3>
             <p>University of Art &amp; Design, New York <br />
               <em>Bachelor of Science in Graphic Design</em></p>
-          </div>
+          </div>-->
         </div>
         <!-- End 2nd Row -->
-        <!-- Begin 3rd Row -->
+        <!-- Begin 3rd Row --
         <div class="entry">
-          <h2>Experience</h2>
-          <div class="content">
+          <h2>Experience-Work</h2>
+	  {% for i in range(0, fp.len_eaw) %}
+              {% set lst = fp.education_work[i].split('%%') %}
+	      {% set date = lst[0] %}
+	      {% set university = lst[1] %}
+	      {% set degree = lst[2] %}
+              <div class="content">
+              <h3> {{ date }} </h3>
+              <p> {{ university }} <br />
+                <em> {{ degree }} </em></p>
+	      </div> 
+	  {%endfor%}
+          <!--<div class="content">
             <h3>May 2009 - Feb 2010</h3>
             <p>Agency Creative, London <br />
               <em>Senior Web Designer</em></p>
@@ -125,14 +152,14 @@
               <li>Sed fermentum sollicitudin interdum. Etiam imperdiet sapien in dolor rhoncus a semper tortor posuere. </li>
               <li>Pellentesque at lectus in libero dapibus cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
             </ul>
-          </div>
+          </div>-
         </div>
         <!-- End 3rd Row -->
 
 <!-- Begin 1st Row -->
         <div class="entry">
           <h2>Teaching Interests</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dignissim viverra nibh sed varius. Proin bibendum nunc in sem ultrices posuere. Aliquam ut aliquam lacus.</p>
+          <p> {{ fp.teaching_interests }} </p>
         </div>
         <!-- End 1st Row -->
 
@@ -141,8 +168,9 @@
         <div class="entry">
           <h2>Projects</h2>
           <ul class="info">
-              <li>Vestibulum eu ante massa, sed rhoncus velit.</li>
-              <li>Pellentesque at lectus in <a href="#">libero dapibus</a> cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
+              {%for i in range(0, fp.len_pr)%} 
+		    <li>{{fp.projects[i]}}</li> 
+	      {%endfor%} 
             </ul>
         </div>
         <!-- End temp Row -->
@@ -151,7 +179,18 @@
 <!-- Begin 3rd Row -->
         <div class="entry">
           <h2>Publications</h2>
-          <div class="content">
+	  {% for i in range(0, fp.len_pu) %}
+              {% set lst = fp.publications[i].split('%%') %}
+	      {% set date = lst[0] %}
+	      {% set name = lst[1] %}
+	      {% set details = lst[2] %}
+              <div class="content">
+              <h3> {{ date }} </h3>
+              <p> {{ name }} <br />
+                <em> {{ details }} </em></p>
+	      </div> 
+	  {%endfor%}
+          <!--<div class="content">
             <h3>May 2009 - Feb 2010</h3>
             <p>Agency Creative, London <br />
               <em>Senior Web Designer</em></p>
@@ -168,14 +207,25 @@
               <li>Sed fermentum sollicitudin interdum. Etiam imperdiet sapien in dolor rhoncus a semper tortor posuere. </li>
               <li>Pellentesque at lectus in libero dapibus cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
             </ul>
-          </div>
+          </div>-->
         </div>
         <!-- End 3rd Row -->
 
 <!-- Begin 3rd Row -->
         <div class="entry">
           <h2>Awards</h2>
-          <div class="content">
+          {% for i in range(0, fp.len_a) %}
+              {% set lst = fp.awards[i].split('%%') %}
+	      {% set date = lst[0] %}
+	      {% set name = lst[1] %}
+	      {% set details = lst[2] %}
+              <div class="content">
+              <h3> {{ date }} </h3>
+              <p> {{ name }} <br />
+                <em> {{ details }} </em></p>
+	      </div> 
+	  {%endfor%}
+          <!--<div class="content">
             <h3>May 2009 - Feb 2010</h3>
             <p>Agency Creative, London <br />
               <em>Senior Web Designer</em></p>
@@ -192,7 +242,7 @@
               <li>Sed fermentum sollicitudin interdum. Etiam imperdiet sapien in dolor rhoncus a semper tortor posuere. </li>
               <li>Pellentesque at lectus in libero dapibus cursus. Sed arcu ipsum, varius at ultricies acuro, tincidunt iaculis diam.</li>
             </ul>
-          </div>
+          </div>-->
         </div>
         <!-- End 3rd Row -->
 

@@ -5,5 +5,11 @@
   "Phone-No": "maa-chudao- nhi deraha",
   "Website": "www.88888.com",
   "About-me": "Always been chutiya",
-  "Research-area": ["Neural Networks", "Chutiyapa"]
+  "Research-area": ["Neural Networks", "Chutiyapa", "ANN" , "LOL"],
+  "Current-Research-interest": ["Advance CV", "lulli", "ANN" , "LOL"],
+  "Education-Work": ["Sep 2005-Feb 2007%%Academy of Art University, London%%Master in Communication Design", "Sep 2001 - Jun 2005%%University of Art & Design, New York%%Bachelor of Science in Graphic Design"],
+  "Teaching-interests": "Neural Networks,Backchodi,Bhasad,Brazzers",
+  "Projects": ["Backchod-Bhabhiji", "Ahh-se-Ahhh-Tak", "Udta_Topa"],
+  "Publications": ["Sep 2005-Feb 2007%%Academy of Art University, London%%Master in Communication Design", "Sep 2001 - Jun 2005%%University of Art & Design, New York%%Bachelor of Science in Graphic Design"],
+  "Awards": ["Sep 2005-Feb 2007%%Academy of Art University, London%%Master in Communication Design", "Sep 2001 - Jun 2005%%University of Art & Design, New York%%Bachelor of Science in Graphic Design"]
 }

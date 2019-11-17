@@ -12,7 +12,7 @@ from flask_pymongo import PyMongo
 from bson.binary import Binary
 import base64
 from bson import BSON
-
+import ast
 app = Flask(__name__)
 
 
@@ -64,6 +64,28 @@ class RegForm(FlaskForm):
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=20)])
 
 
+
+
+class Facultyprofile():
+    name = ""
+    department = ""
+    email = ""
+    phone = ""
+    website = ""
+    about_me = ""
+    research_area = []
+    len_ra = 0
+    current_research_interest = []
+    len_cri = 0
+    education_work = []
+    len_eaw = 0
+    teaching_interests = ""
+    projects = []
+    len_pr = 0
+    publications = []
+    len_pu = 0
+    awards = []
+    len_a = 0
 class FacultyDetails(FlaskForm):
     #name = TextField("Name")
     name = StringField('name', validators=[InputRequired(), Length(max=30)])
@@ -119,18 +141,39 @@ def login():
 @login_required
 def dashboard():
     form = FacultyDetails()
+    fp = Facultyprofile()
     faculty = facultys.find_one({'Email': current_user.useremail})
     if faculty is None:
         return redirect(url_for('editinfo'))
+    fp.name = faculty['Name']
+    fp.email = faculty['Email']
+    fp.department = faculty['Department']
+    fp.phone_no =  faculty['Phone-No']
+    fp.website = faculty['Website']
+    fp.about_me = faculty['About-me']
+    fp.research_area = list(faculty['Research-area'])
+    fp.len_ra = len(fp.research_area)
+    fp.current_research_interest = list(faculty['Current-Research-interest'])
+    fp.len_cri = len(fp.current_research_interest)
+    fp.education_work = list(faculty['Education-Work'])
+    fp.len_eaw = len(fp.education_work)
+    fp.teaching_interests = faculty['Teaching-interests']
+    fp.projects = list(faculty['Projects'])
+    fp.len_pr = len(fp.projects)
+    fp.publications = list(faculty['Publications'])
+    fp.len_pu = len(fp.publications)
+    fp.awards = list(faculty['Awards'])
+    fp.len_a = len(fp.awards)
+    list_research_area = list(faculty['Research-area'])
     if facultys.find({'_id': faculty['_id'], 'profile_pic': {"$exists":True}}).count() > 0:
         ppic_binary = faculty['profile_pic']
         ppic = base64.b64encode(ppic_binary).decode("utf-8")
         #ppic = BSON.decode(ppic_binary)
         # ppic = ppic_binary
         #print(ppic)
-        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'], profile_pic=ppic, form=form)
+        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area),profile_pic=ppic, form=form,fp=fp)
     else:
-        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'], profile_pic="", form=form)
+        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area), profile_pic="", form=form,fp=fp)
 
 @app.route('/editinfo', methods=['GET', 'POST'])
 @login_required
@@ -143,7 +186,15 @@ def editinfo():
         ph = request.form['Phone_No']
         website = request.form['Website']
         about_me = request.form['About_me']
-        research_area = request.form['Research_area']
+        research_area = ast.literal_eval(request.form['Research_area'])
+        current_research_interest = ast.literal_eval(request.form['Current_Research_interest'])
+        education_work = ast.literal_eval(request.form['Education_Work'])
+        teaching_interests = request.form['Teaching_interests']
+        projects = ast.literal_eval(request.form['Projects'])
+        publications = ast.literal_eval(request.form['Publications'])
+        awards = ast.literal_eval(request.form['Awards'])
+        
+        
         profile_pic = request.files['profile_pic'].read()
         binary_profile_pic = Binary(profile_pic)
         faculty = facultys.find_one({'Email': current_user.useremail})
@@ -156,7 +207,13 @@ def editinfo():
                 'Website': website,
                 'About-me': about_me,
                 'Research-area': research_area,
-                'profile_pic': binary_profile_pic
+                'profile_pic': binary_profile_pic,
+                'Current-Research-interest' : current_research_interest,
+                'Education-Work' : education_work,
+                'Teaching-interests' : teaching_interests,
+                'Projects' : projects,
+                'Publications' : publications,
+                'Awards' : awards
             })
         else:
             facultys.update({'_id': faculty['_id']}, {
@@ -167,13 +224,39 @@ def editinfo():
                 'Website': website,
                 'About-me': about_me,
                 'Research-area': research_area,
-                'profile_pic': binary_profile_pic
+                'profile_pic': binary_profile_pic,
+                'Current-Research-interest' : current_research_interest,
+                'Education-Work' : education_work,
+                'Teaching-interests' : teaching_interests,
+                'Projects' : projects,
+                'Publications' : publications,
+                'Awards' : awards
             })
         return redirect(url_for('dashboard'))
     faculty = facultys.find_one({'Email': current_user.useremail})
+    fp = Facultyprofile()
     if faculty is None:
-        return render_template('editinfo.html')
-    return render_template('editinfo.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],form=form)
+        return render_template('editinfo.html',fp=fp)
+    fp.name = faculty['Name']
+    fp.email = faculty['Email']
+    fp.department = faculty['Department']
+    fp.phone_no =  faculty['Phone-No']
+    fp.website = faculty['Website']
+    fp.about_me = faculty['About-me']
+    fp.research_area = list(faculty['Research-area'])
+    fp.len_ra = len(fp.research_area)
+    fp.current_research_interest = list(faculty['Current-Research-interest'])
+    fp.len_cri = len(fp.current_research_interest)
+    fp.education_work = list(faculty['Education-Work'])
+    fp.len_eaw = len(fp.education_work)
+    fp.teaching_interests = faculty['Teaching-interests']
+    fp.projects = list(faculty['Projects'])
+    fp.len_pr = len(fp.projects)
+    fp.publications = list(faculty['Publications'])
+    fp.len_pu = len(fp.publications)
+    fp.awards = list(faculty['Awards'])
+    fp.len_a = len(fp.awards)
+    return render_template('editinfo.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],fp=fp,form=form)
 
 @app.route('/logout', methods = ['GET'])
 @login_required
