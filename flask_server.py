@@ -9,13 +9,12 @@ from wtforms.validators import Email, Length, InputRequired
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
+from bson.binary import Binary
+import base64
+from bson import BSON
 
 app = Flask(__name__)
 
-# app.config['MONGODB_SETTINGS'] = {
-#     'db': 'faculty_auth',
-#     'host': 'mongodb://localhost:27017/faculty_auth'
-# }
 
 app.config['MONGO_DBNAME'] = 'faculty_auth'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/faculty_auth'
@@ -32,15 +31,8 @@ facultys = mongo.db.Faculty_profile
 
 @app.route("/")
 def documentation():
-    #return "Hello World"
-    #print(os.getcwd())
     return send_from_directory(os.getcwd(),"documentation.txt")
-    #return send_from_directory("/home/rohit/DataBase_Project/","documentation.txt")
 
-# class User(UserMixin, mongo.db.Document):
-#     meta = {'collection': 'User_Auth'}
-#     email = mongo.db.StringField(max_length=30)
-#     password = mongo.db.StringField()
 
 class User():
 
@@ -65,7 +57,6 @@ def load_user(user_id):
     if not user:
         return None
     return User(user['email'])
-    # return User.objects(pk=user_id).first()
 
 
 class RegForm(FlaskForm):
@@ -95,11 +86,9 @@ def register():
     form = RegForm()
     if request.method == 'POST':
         if form.validate():
-            # existing_user = User.objects(email=form.email.data).first()
             existing_user = users.find_one({'email': form.email.data})
             if existing_user is None:
                 hashpass = generate_password_hash(form.password.data, method='sha256')
-                # hey = User(form.email.data,hashpass).save()
                 user_id = users.insert({
                     'email': form.email.data,
                     'password': hashpass
@@ -118,7 +107,6 @@ def login():
     form = RegForm()
     if request.method == 'POST':
         if form.validate():
-            # check_user = User.objects(email=form.email.data).first()
             check_user = users.find_one({'email': form.email.data})
             if check_user:
                 if check_password_hash(check_user['password'], form.password.data):
@@ -133,19 +121,58 @@ def dashboard():
     form = FacultyDetails()
     faculty = facultys.find_one({'Email': current_user.useremail})
     if faculty is None:
-        return "No Faculty Portal Found"
-    return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],form=form)
+        return redirect(url_for('editinfo'))
+    if facultys.find({'_id': faculty['_id'], 'profile_pic': {"$exists":True}}).count() > 0:
+        ppic_binary = faculty['profile_pic']
+        ppic = base64.b64encode(ppic_binary).decode("utf-8")
+        #ppic = BSON.decode(ppic_binary)
+        # ppic = ppic_binary
+        #print(ppic)
+        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'], profile_pic=ppic, form=form)
+    else:
+        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'], profile_pic="", form=form)
 
-
-@app.route('/editinfo', methods=['POST'])
+@app.route('/editinfo', methods=['GET', 'POST'])
 @login_required
 def editinfo():
     form = FacultyDetails()
+    if request.method == 'POST':
+        name = request.form['Name']
+        dept = request.form['Department']
+        email = request.form['Email']
+        ph = request.form['Phone_No']
+        website = request.form['Website']
+        about_me = request.form['About_me']
+        research_area = request.form['Research_area']
+        profile_pic = request.files['profile_pic'].read()
+        binary_profile_pic = Binary(profile_pic)
+        faculty = facultys.find_one({'Email': current_user.useremail})
+        if faculty is None:
+            facultys.insert({
+                'Name': name,
+                'Department': dept,
+                'Email': email,
+                'Phone-No': ph,
+                'Website': website,
+                'About-me': about_me,
+                'Research-area': research_area,
+                'profile_pic': binary_profile_pic
+            })
+        else:
+            facultys.update({'_id': faculty['_id']}, {
+                'Name': name,
+                'Department': dept,
+                'Email': email,
+                'Phone-No': ph,
+                'Website': website,
+                'About-me': about_me,
+                'Research-area': research_area,
+                'profile_pic': binary_profile_pic
+            })
+        return redirect(url_for('dashboard'))
     faculty = facultys.find_one({'Email': current_user.useremail})
     if faculty is None:
-        return "No Faculty Portal Found"
-    if request.method == 'POST':
-        request.form['']
+        return render_template('editinfo.html')
     return render_template('editinfo.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=faculty['Research-area'],form=form)
 
 @app.route('/logout', methods = ['GET'])
@@ -154,33 +181,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# @app.route("/user/", methods = ['POST', 'OPTIONS'])
-# def refactor():
-#     if request.method == "OPTIONS":
-#         return "Message: wait"
-#     try:
-#         data = request.get_json()
-#         refactor_type = data["refactorType"]
-#         project_name = data["project"]
-#         codebase_url = data["codebaseURL"]
-#         cmd_gitclone = ['git', '-C','./temp_codebase', 'clone', codebase_url, '--depth=1']
-#         project_final = "temp_codebase/" + project_name
-#         cmd_delete = ['rm','-r', project_final]
-#         proc = subprocess.Popen(cmd_gitclone, stdout=PIPE, stderr=PIPE)
-#         stdout,stderr = proc.communicate()
-#         """
-#         print(stdout)
-#         print("-------------------------------------------------")
-#         print(stderr)
-#         if stderr.decode("utf-8") != "":
-#             return "E:The project could not be cloned. Provide valid git URL."
-#         """
-#         result = globals()[refactor_type](data)
-#         proc = subprocess.Popen(cmd_delete, stdout=PIPE, stderr=PIPE)
-#         stdout,stderr = proc.communicate()
-#     except Exception as ex:
-#         return "E:Invalid refactorType"
-#     return result
+
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port="8001")
