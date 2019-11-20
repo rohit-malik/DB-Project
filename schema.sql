@@ -10,7 +10,8 @@ CREATE TABLE Department(
 
 
 CREATE TABLE Faculty(
-  faculty_id int PRIMARY KEY NOT NULL,
+  faculty_id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  email varchar(50) NOT NULL UNIQUE,
   department_id int NOT NULL,
   post varchar(50),
   join_date timestamp,
@@ -30,7 +31,7 @@ CREATE TABLE HOD(
 
 
 CREATE TABLE Application(
-  application_id int PRIMARY KEY NOT NULL,
+  application_id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   faculty_id int NOT NULL,
   start_date timestamp,
   end_date timestamp,
@@ -38,7 +39,7 @@ CREATE TABLE Application(
 );
 
 CREATE TABLE Current_Status(
-  status_id int PRIMARY KEY NOT NULL,
+  status_id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   current_holder_post varchar(50),
   current_holder_id int,
   status varchar(50),
@@ -48,7 +49,7 @@ CREATE TABLE Current_Status(
 );
 
 CREATE TABLE Application_log(
-  log_id int NOT NULL PRIMARY KEY,
+  log_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   application_id int NOT NULL,
   comment varchar(100),
   post varchar(50),
@@ -60,7 +61,7 @@ CREATE TABLE Application_log(
 
 
 CREATE TABLE HOD_logs(
-  log_id int NOT NULL PRIMARY KEY,
+  log_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   faculty_id int NOT NULL,
   dept_id int NOT NULL,
   start_date timestamp,
@@ -71,6 +72,7 @@ CREATE TABLE HOD_logs(
 
 
 CREATE TABLE Special_logs(
+  log_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   faculty_id int NOT NULL,
   start_date timestamp,
   end_time timestamp,
@@ -85,3 +87,13 @@ CREATE TABLE Special_posts(
   FOREIGN KEY(faculty_id) REFERENCES Faculty(faculty_id),
   FOREIGN KEY(post) REFERENCES Posts(post_name)
 );
+
+INSERT INTO Posts VALUES(1,"Faculty");
+INSERT INTO Posts VALUES(2,"DeanFA");
+INSERT INTO Posts VALUES(3,"DeanAFA");
+INSERT INTO Posts VALUES(4,"HOD");
+INSERT INTO Posts VALUES(5,"Director");
+
+INSERT INTO Department VALUES(1,"CSE");
+INSERT INTO Department VALUES(2,"ME");
+INSERT INTO Department VALUES(3,"EE");
