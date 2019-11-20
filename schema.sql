@@ -88,6 +88,13 @@ CREATE TABLE Special_posts(
   FOREIGN KEY(post) REFERENCES Posts(post_name)
 );
 
+CREATE TABLE Application_route(
+  sender varchar(50) NOT NULL UNIQUE,
+  receiver varchar(50) NOT NULL,
+  FOREIGN KEY(sender) REFERENCES Posts(post_name),
+  FOREIGN KEY(receiver) REFERENCES Posts(post_name)
+);
+
 INSERT INTO Posts(post_id, post_name) VALUES(1,'Faculty');
 INSERT INTO Posts(post_id, post_name) VALUES(2,'DeanFA');
 INSERT INTO Posts(post_id, post_name) VALUES(3,'DeanAFA');
@@ -97,3 +104,7 @@ INSERT INTO Posts(post_id, post_name) VALUES(5,'Director');
 INSERT INTO Department(department_id, dept_name) VALUES(1,'CSE');
 INSERT INTO Department(department_id, dept_name) VALUES(2,'ME');
 INSERT INTO Department(department_id, dept_name) VALUES(3,'EE');
+
+INSERT INTO Application_route(sender, receiver) VALUES('Faculty','HOD');
+INSERT INTO Application_route(sender, receiver) VALUES('HOD','DeanFA');
+INSERT INTO Application_route(sender, receiver) VALUES('DeanFA','Director');
