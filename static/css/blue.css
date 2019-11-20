@@ -685,7 +685,7 @@ input {
 
 input.submitprofile {
 	width:150px;
-	float:right;
+	float:left;
 	height:50px;
 	margin-bottom:10px;
 }
