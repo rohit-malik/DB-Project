@@ -13,6 +13,8 @@ from bson.binary import Binary
 import base64
 from bson import BSON
 import ast
+import psycopg2
+from datetime import datetime as dt
 app = Flask(__name__)
 
 
@@ -179,11 +181,50 @@ def dashboard():
 @login_required
 def leavapplication():
     fp = Facultyprofile()
+    connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
     if request.method == 'POST':
         startdate = request.form['StartDate']
         enddate = request.form['EndDate']
         comments = request.form['Comments']
-        
+        print(startdate,enddate,comments,"HI in the leave application")
+        try:
+            connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+            sql = """select faculty_id,post from faculty where faculty.email = %s"""
+            records = (current_user.useremail,)
+            #print("inside the try")
+            conn = psycopg2.connect(connect_str)
+    
+            cursor = conn.cursor()
+    
+            cursor.execute(sql,records)
+            row = cursor.fetchone()
+            faculty_id = int(row[0])
+            post = row[1]
+            sql = """INSERT INTO application(faculty_id,start_date,end_date) VALUES(%s,%s,%s) RETURNING application_id"""
+            #print(row)
+            records = (int(row[0]),startdate,enddate)
+            cursor.execute(sql,records)
+            
+            application_id = int(cursor.fetchone()[0])
+            
+            sql = """INSERT INTO application_log(application_id,comment,post,date_of_comment,action_taken) VALUES(%s,%s,%s,%s,%s)"""
+            #print(row)
+            records = (application_id,comments,post,dt.now(),"submitted")
+            cursor.execute(sql,records)
+            '''
+            sql = """INSERT INTO application_log(application_id,comment,post,date_of_comment,action_taken) VALUES(%s,%s,%s,%s,%s)"""
+            #print(row)
+            records = (application_id,comments,post,dt.now(),"submitted")
+            cursor.execute(sql,records)'''
+            
+            conn.commit() # <--- makes sure the change is shown in the database
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print("Uh oh, can't connect. Invalid dbname, user or password?")
+            print(e)
     return render_template('leaveapplication.html',fp=fp)
     '''if request.method == 'POST':
         startdate = request.form['StartDate']
@@ -196,6 +237,7 @@ def leavapplication():
 @login_required
 def editinfo():
     form = FacultyDetails()
+    dep_dic = {"CSE":1,"ME":2,"EE":3}
     if request.method == 'POST':
         name = request.form['Name']
         dept = request.form['Department']
@@ -219,7 +261,7 @@ def editinfo():
             facultys.insert({
                 'Name': name,
                 'Department': dept,
-                'Email': email,
+                'Email': current_user.useremail,
                 'Phone-No': ph,
                 'Website': website,
                 'About-me': about_me,
@@ -232,11 +274,30 @@ def editinfo():
                 'Publications' : publications,
                 'Awards' : awards
             })
+            try:
+                connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+                sql = """INSERT INTO faculty(email,department_id,post,leaves_remaining,leaves_can_be_borrowed)
+             VALUES(%s,%s,%s,%s,%s)"""
+                records = (current_user.useremail,dep_dic[dept],"Faculty",10,10)
+    
+                conn = psycopg2.connect(connect_str)
+    
+                cursor = conn.cursor()
+    
+                cursor.execute(sql,records)
+    
+                conn.commit() # <--- makes sure the change is shown in the database
+                cursor.close()
+                conn.close()
+            except Exception as e:
+                print("Uh oh, can't connect. Invalid dbname, user or password?")
+                print(e)
         else:
             facultys.update({'_id': faculty['_id']}, {
                 'Name': name,
                 'Department': dept,
-                'Email': email,
+                'Email': current_user.useremail,
                 'Phone-No': ph,
                 'Website': website,
                 'About-me': about_me,
@@ -249,6 +310,24 @@ def editinfo():
                 'Publications' : publications,
                 'Awards' : awards
             })
+            try:
+                connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+                dep_dic = {"CSE":1,"ME":2,"EE":3}
+                sql = """UPDATE faculty SET department_id = %s WHERE email = %s"""
+                records = (dep_dic[dept],current_user.useremail)
+                conn = psycopg2.connect(connect_str)
+    
+                cursor = conn.cursor()
+    
+                cursor.execute(sql,records)
+    
+                conn.commit() # <--- makes sure the change is shown in the database
+                cursor.close()
+                conn.close()
+            except Exception as e:
+                print("Uh oh, can't connect. Invalid dbname, user or password?")
+                print(e)
         return redirect(url_for('dashboard'))
     faculty = facultys.find_one({'Email': current_user.useremail})
     fp = Facultyprofile()
