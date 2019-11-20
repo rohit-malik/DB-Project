@@ -278,8 +278,8 @@ def editinfo():
                 connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
                   "password='toor'"
                 sql = """INSERT INTO faculty(name,email,department_id,post,leaves_remaining,leaves_can_be_borrowed)
-             VALUES(%s,%s,%s,%s,%s)"""
-                records = (name,current_user.useremail,dep_dic[dept],"Faculty",10,10)
+             VALUES(%s,%s,%s,%s,%s,%s)"""
+                records = (name,str(current_user.useremail),dep_dic[dept],'Faculty',10,10)
 
                 conn = psycopg2.connect(connect_str)
 
@@ -394,7 +394,7 @@ def front_page():
             connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
                   "password='toor'"
             sql = """select name,email from faculty"""
-            records = (current_user.useremail,)
+            # records = (current_user.useremail,)
             #print("inside the try")
             conn = psycopg2.connect(connect_str)
 
