@@ -195,9 +195,9 @@ def leavapplication():
             records = (current_user.useremail,)
             #print("inside the try")
             conn = psycopg2.connect(connect_str)
-    
+
             cursor = conn.cursor()
-    
+
             cursor.execute(sql,records)
             row = cursor.fetchone()
             faculty_id = int(row[0])
@@ -206,9 +206,9 @@ def leavapplication():
             #print(row)
             records = (int(row[0]),startdate,enddate)
             cursor.execute(sql,records)
-            
+
             application_id = int(cursor.fetchone()[0])
-            
+
             sql = """INSERT INTO application_log(application_id,comment,post,date_of_comment,action_taken) VALUES(%s,%s,%s,%s,%s)"""
             #print(row)
             records = (application_id,comments,post,dt.now(),"submitted")
@@ -218,7 +218,7 @@ def leavapplication():
             #print(row)
             records = (application_id,comments,post,dt.now(),"submitted")
             cursor.execute(sql,records)'''
-            
+
             conn.commit() # <--- makes sure the change is shown in the database
             cursor.close()
             conn.close()
@@ -252,8 +252,8 @@ def editinfo():
         projects = ast.literal_eval(request.form['Projects'])
         publications = ast.literal_eval(request.form['Publications'])
         awards = ast.literal_eval(request.form['Awards'])
-        
-        
+
+
         profile_pic = request.files['profile_pic'].read()
         binary_profile_pic = Binary(profile_pic)
         faculty = facultys.find_one({'Email': current_user.useremail})
@@ -277,16 +277,16 @@ def editinfo():
             try:
                 connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
                   "password='toor'"
-                sql = """INSERT INTO faculty(email,department_id,post,leaves_remaining,leaves_can_be_borrowed)
+                sql = """INSERT INTO faculty(name,email,department_id,post,leaves_remaining,leaves_can_be_borrowed)
              VALUES(%s,%s,%s,%s,%s)"""
-                records = (current_user.useremail,dep_dic[dept],"Faculty",10,10)
-    
+                records = (name,current_user.useremail,dep_dic[dept],"Faculty",10,10)
+
                 conn = psycopg2.connect(connect_str)
-    
+
                 cursor = conn.cursor()
-    
+
                 cursor.execute(sql,records)
-    
+
                 conn.commit() # <--- makes sure the change is shown in the database
                 cursor.close()
                 conn.close()
@@ -317,11 +317,11 @@ def editinfo():
                 sql = """UPDATE faculty SET department_id = %s WHERE email = %s"""
                 records = (dep_dic[dept],current_user.useremail)
                 conn = psycopg2.connect(connect_str)
-    
+
                 cursor = conn.cursor()
-    
+
                 cursor.execute(sql,records)
-    
+
                 conn.commit() # <--- makes sure the change is shown in the database
                 cursor.close()
                 conn.close()
@@ -359,6 +359,56 @@ def editinfo():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/frontpage', methods = ['GET', 'POST'])
+def front_page():
+    if request.method == 'POST':
+        email_id = request.form['faculty_email']
+        print(email_id.strip())
+        print(type(email_id))
+        email_id = email_id.strip()
+        faculty = facultys.find_one({'Email': email_id})
+        fp = Facultyprofile()
+        fp.name = faculty['Name']
+        fp.email = faculty['Email']
+        fp.department = faculty['Department']
+        fp.phone_no =  faculty['Phone-No']
+        fp.website = faculty['Website']
+        fp.about_me = faculty['About-me']
+        fp.research_area = list(faculty['Research-area'])
+        fp.len_ra = len(fp.research_area)
+        fp.current_research_interest = list(faculty['Current-Research-interest'])
+        fp.len_cri = len(fp.current_research_interest)
+        fp.education_work = list(faculty['Education-Work'])
+        fp.len_eaw = len(fp.education_work)
+        fp.teaching_interests = faculty['Teaching-interests']
+        fp.projects = list(faculty['Projects'])
+        fp.len_pr = len(fp.projects)
+        fp.publications = list(faculty['Publications'])
+        fp.len_pu = len(fp.publications)
+        fp.awards = list(faculty['Awards'])
+        fp.len_a = len(fp.awards)
+        return render_template('front_index.html',fp=fp)
+    else:
+        try:
+            connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+            sql = """select name,email from faculty"""
+            records = (current_user.useremail,)
+            #print("inside the try")
+            conn = psycopg2.connect(connect_str)
+
+            cursor = conn.cursor()
+
+            cursor.execute(sql)
+            row = cursor.fetchall()
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print("Uh oh, can't connect. Invalid dbname, user or password?")
+            print(e)
+        return render_template('front_page.html',len_faculty = len(row), faculty_list=row)
+
 
 
 

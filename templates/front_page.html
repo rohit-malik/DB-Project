@@ -34,7 +34,7 @@
         <div class="entry">
           <!-- Begin Image -->
           <!-- <img class="portrait" src="{{ url_for('static', filename='images/image.jpg') }}" alt="John Smith" /> -->
-					<img class="portrait" src='data:image/png;base64,{{ profile_pic }}'/>
+					<!-- <img class="portrait" src='data:image/png;base64,{{ profile_pic }}'/> -->
           <!-- End Image -->
           <!-- Begin Personal Information -->
           <div class="self">
@@ -49,17 +49,18 @@
         <div class="entry">
           <h2>Faculties</h2>
 
-	  {% for i in range(0, fp.len_faculty) %}
-              {% set faculty_name = fp.faculty_list[i][0] %}
-              {% set faculty_email = fp.faculty_list[i][1] %}
+	  {% for i in range(0, len_faculty) %}
+              {% set faculty_name = faculty_list[i][0] %}
+              {% set faculty_email = faculty_list[i][1] %}
               <div class="content">
-              <h3> {{ faculty_name }} </h3>
-              <p> {{ faculty_email }} <br />
-                </p>
+                <form id="{{faculty_email}}" method="post" action="frontpage">
+                  <input id="{{faculty_email}}" type="hidden" name="faculty_email" value=" {{faculty_email}}">
+                  <h3><a onclick="document.getElementById('{{faculty_email}}').submit();">{{faculty_name}}</a></h3>
+                </form>
+                <p>{{faculty_email}}</p>
 	      </div>
 	  {%endfor%}
         </div>
-
 
 
       </div>

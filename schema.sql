@@ -11,6 +11,7 @@ CREATE TABLE Department(
 
 CREATE TABLE Faculty(
   faculty_id SERIAL PRIMARY KEY NOT NULL,
+  name varchar(50) NOT NULL,
   email varchar(50) NOT NULL UNIQUE,
   department_id int NOT NULL,
   post varchar(50),
