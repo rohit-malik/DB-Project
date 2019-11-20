@@ -34,79 +34,122 @@
 <form action=/editinfo method='POST' enctype='multipart/form-data'>
 
 	<div class="entry">
-		<input class="portrait" label='Image' type="file" accept="image/*", name="profile_pic">
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Upload_image
+		<input class="portrait" label='Image' style="width:60%; height:40%;" type="file" accept="image/*", name="profile_pic">
+		</label><br>
 	</div>
 
 	<div class="entry">
-		<input lable='Name' style="width:60%; height:10%; type="text" class="name" value="{{fp.name}}" name='Name'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Name
+		<input style="width:60%; height:10%; type="text" class="name" value="{{fp.name}}" name='Name'>
+		</label><br>
 	</div>
 	
 	<div class="entry">
-		<input lable='Department' style="width:60%; height:10%; type="text" class="name" value="{{fp.department}}" name='Department'><br>
-	</div>
-	
-		
-	<div class="entry">
-		<input lable='Email' style="width:60%; height:10%; type="text" class="name" value="{{fp.email}}" name='Email'><br>
-	</div>
-	
-		
-	<div class="entry">
-		<input lable='Phone_No' style="width:60%; height:10%; type="text" class="name" value="{{fp.phone_no}}" name='Phone_No'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Department
+		<input lable='Department' style="width:60%; height:10%; type="text" class="name" value="{{fp.department}}" name='Department'>
+		</label><br>
 	</div>
 	
 		
 	<div class="entry">
-		<input lable='Website' style="width:60%; height:10%; type="text" class="name" value="{{fp.website}}" name='Website'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Email
+		<input lable='Email' style="width:60%; height:10%; type="text" class="name" value="{{fp.email}}" name='Email'>
+		</label><br>
 	</div>
 	
 		
 	<div class="entry">
-		<input lable='About_me' style="width:60%; height:10%; type="text" class="name" value="{{fp.about_me}}" name='About_me'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Phone_No
+		<input lable='Phone_No' style="width:60%; height:10%; type="text" class="name" value="{{fp.phone_no}}" name='Phone_No'>
+		</label><br>
 	</div>
 	
 		
 	<div class="entry">
-		<input lable='Research_area' style="width:60%; height:10%; type="text" class="name" value="{{fp.research_area}}" name='Research_area'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Website
+		<input lable='Website' style="width:60%; height:10%; type="text" class="name" value="{{fp.website}}" name='Website'>
+		</label><br>
 	</div>
 	
 		
 	<div class="entry">
-		<input lable='Current_Research_interest' style="width:60%; height:10%; type="text" class="name" value="{{fp.current_research_interest}}" name='Current_Research_interest'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		About_me
+		<input lable='About_me' style="width:60%; height:10%; type="text" class="name" value="{{fp.about_me}}" name='About_me'>
+		</label><br>
 	</div>
-	
 	
 		
 	<div class="entry">
-		<input lable='Education_Work' style="width:60%; height:10%; type="text" class="name" value="{{fp.education_work}}" name='Education_Work'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Research_area
+		<input lable='Research_area' style="width:60%; height:10%; type="text" class="name" value="{{fp.research_area}}" name='Research_area'>
+		</label><br>
 	</div>
-	
-	
 	
 		
 	<div class="entry">
-		<input lable='Teaching_interests' style="width:60%; height:10%; type="text" class="name" value="{{fp.teaching_interests}}" name='Teaching_interests'><br>
-	</div>
-	
-	
-		
-	<div class="entry">
-		<input lable='Projects' style="width:60%; height:10%; type="text" class="name" value="{{fp.projects}}" name='Projects'><br>
-	</div>
-	
-	
-		
-	<div class="entry">
-		<input lable='Publications' style="width:60%; height:10%; type="text" class="name" value="{{fp.publications}}" name='Publications'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Current_Research_interest
+		<input lable='Current_Research_interest' style="width:60%; height:10%; type="text" class="name" value="{{fp.current_research_interest}}" name='Current_Research_interest'>
+		</label><br>
 	</div>
 	
 	
 		
 	<div class="entry">
-		<input lable='Awards' style="width:60%; height:10%; type="text" class="name" value="{{fp.awards}}" name='Awards'><br>
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Education_Work
+		<input lable='Education_Work' style="width:60%; height:10%; type="text" class="name" value="{{fp.education_work}}" name='Education_Work'>
+		</label><br>
+	</div>
+	
+	
+	
+		
+	<div class="entry">
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Teaching_Interests
+		<input lable='Teaching_interests' style="width:60%; height:10%; type="text" class="name" value="{{fp.teaching_interests}}" name='Teaching_interests'>
+		</label><br>
+	</div>
+	
+	
+		
+	<div class="entry">
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Projects
+		<input lable='Projects' style="width:60%; height:10%; type="text" class="name" value="{{fp.projects}}" name='Projects'>
+		</label><br>
+	</div>
+	
+	
+		
+	<div class="entry">
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Publications
+		<input lable='Publications' style="width:60%; height:10%; type="text" class="name" value="{{fp.publications}}" name='Publications'>
+		</label><br>
+	</div>
+	
+	
+		
+	<div class="entry">
+		<label style="width:60%; height:10%; margin-left: 50px;">
+		Awards
+		<input lable='Awards' style="width:60%; height:10%; type="text" class="name" value="{{fp.awards}}" name='Awards'>
+		</label><br>
 	</div>
 	<br>
-	<input type="submit" value="Submit" class="submitprofile">
+	<br>
+	<input type="submit" style="margin-left:250px;" value="Submit" class="submitprofile">
 	
 </form>
       </div>
