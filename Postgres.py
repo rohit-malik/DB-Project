@@ -1,19 +1,22 @@
 import psycopg2
 
 try:
-    connect_str = "dbname='testpython' user='matt' host='localhost' " + \
+    connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
                   "password='toor'"
-    # use our connection values to establish a connection
+    sql = """INSERT INTO department(department_id,dept_name)
+             VALUES(%s,%s)"""
+    records = (1,"Farji")
+    
     conn = psycopg2.connect(connect_str)
-    # create a psycopg2 cursor that can execute queries
+    
     cursor = conn.cursor()
-    # create a new table with a single column called "name"
-    cursor.execute("""CREATE TABLE tutorials (name char(40));""")
-    # run a SELECT statement - no data in there, but we can try it
-    cursor.execute("""SELECT * from tutorials""")
+    
+    cursor.execute(sql,records)
+    
+    #result = cursor.fetchone()[0]
     conn.commit() # <--- makes sure the change is shown in the database
-    rows = cursor.fetchall()
-    print(rows)
+    #rows = cursor.fetchall()
+    #print(result)
     cursor.close()
     conn.close()
 except Exception as e:

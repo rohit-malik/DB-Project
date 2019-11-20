@@ -175,6 +175,14 @@ def dashboard():
     else:
         return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area), profile_pic="", form=form,fp=fp)
 
+@app.route('/leaveapplication', methods=['GET', 'POST'])
+@login_required
+def leavapplication():
+    if request.method == 'POST'
+        startdate = request.form['StartDate']
+        enddate = request.form['EndDate']
+        comments = request.form['Comments']
+        
 @app.route('/editinfo', methods=['GET', 'POST'])
 @login_required
 def editinfo():
