@@ -178,11 +178,20 @@ def dashboard():
 @app.route('/leaveapplication', methods=['GET', 'POST'])
 @login_required
 def leavapplication():
-    if request.method == 'POST'
+    fp = Facultyprofile()
+    if request.method == 'POST':
         startdate = request.form['StartDate']
         enddate = request.form['EndDate']
         comments = request.form['Comments']
         
+    return render_template('leaveapplication.html',fp=fp)
+    '''if request.method == 'POST':
+        startdate = request.form['StartDate']
+        enddate = request.form['EndDate']
+        comments = request.form['Comments']
+        print(startdate,enddate,comments)
+    return redirect(url_for('dashboard'))'''
+
 @app.route('/editinfo', methods=['GET', 'POST'])
 @login_required
 def editinfo():
