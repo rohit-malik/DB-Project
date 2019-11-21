@@ -268,20 +268,31 @@
 	{% if ap.len_applist==0 %}
 	       <p>None</p>
 	{% else %}
-		{% for i in range(0, ap.len_applist) %}
-		      {% set name = ap.applications[i][0] %}
-		      {% set app = ap.applications[i][1] %}
-		      <form id= "{{app[0][0]}}" action=/handleapplication method='POST' enctype='multipart/form-data'>
-		      <div class="content">
-		      <label style="width:60%; height:10%; margin-left: 50px;">
-			{{ name }}
-			<input id= "{{app[0][0]}}" lable='comment' style="width:60%; height:10%; type="text" class="name" value="{{app[0][2]}}" name='comment'>
-			</label>
-			<input id= "{{app[0][0]}}" lable='app_id' type="hidden" class="name" value="{{app[0][1]}}" name='app_id'>
-			 <input style="width:60%; height:10%; margin-left: 50px;" type = "submit" name = "button_1" value="forward">
-			  <input style="width:60%; height:10%; margin-left: 50px;" type = "submit" name = "button_2" value="backward">
-		 
-		  	</form>
+		{% for i in ap.applications %}
+		      {% set name = i[0] %}
+		      {% set app = i[1] %}
+		      {% set len_app = app|length %}
+		      <form id= "{{app[i]}}" action=/handleapplication method='POST' enctype='multipart/form-data'>
+		      {% set app_var = 1 %} 
+		      	<div class="content">
+		      {% for j in app %}
+		      	{% set app_var = j[1] %}
+		      	<label style="width:60%; height:10%; margin-left: 50px;">
+				{{ name }}
+				<p  style="width:60%; height:10%; class="name" name='comment'>{{j[2]}}</p>
+				</label>
+		  	
+		  		{%endfor%}
+		  	{% for j in app %}
+		  		{% set app_var = j[1] %}
+		  	
+		  		<input id= "app_id" type="hidden" class="name" value={{app_var}} name='app_id'>
+		  	{% endfor %}
+		  	<input id= "comment" type="text" class="name" value="please insert" name='comment'>
+		  	<input style="width:60%; height:10%; margin-left: 50px;" type = "submit" name = "button_1" value="forward">
+			  	<input style="width:60%; height:10%; margin-left: 50px;" type = "submit" name = "button_2" value="backward">
+			  	</div>
+			  </form>
 		  	 {%endfor%}
 	{% endif %}
 	  </div>

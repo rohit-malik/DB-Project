@@ -146,7 +146,7 @@ def login():
 def handleapplication():
     status = ''
     if request.method == 'POST':
-        print(list(request.form.keys()))
+        print("*********This is the requestform list************:",request.form)
         action = list(request.form.keys())[2]
         app_id = request.form['app_id']
         comment = request.form['comment']
@@ -234,7 +234,10 @@ def dashboard():
                 sql = """select faculty.name from faculty, application where faculty.faculty_id=application.faculty_id and application.application_id=%s"""
                 cursor.execute(sql,records)
                 name = cursor.fetchone()[0]
-                temp_list.append((name,apps))
+                out = []
+                for i in apps:
+                	out.append(list(i))
+                temp_list.append([name,out])
         conn.commit() # <--- makes sure the change is shown in the database
         cursor.close()
         conn.close()
@@ -510,4 +513,38 @@ def front_page():
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port="8001")
+    app.run(host='127.0.0.1', port=
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    8001)
