@@ -8,7 +8,10 @@ cur_status_id int;
 time_sec int;
 time_days int;
 fac_id_orig int;
+fac_post_orig VARCHAR;
 BEGIN
+select into fac_id_orig faculty_id from application where application_id=NEW.application_id;
+select into fac_post_orig post from faculty where faculty_id = fac_id_orig;
 if NEW.action_taken ='backward' then
   if NEW.post = 'Director' Then
     select into holder_post faculty.post from application, faculty where application.faculty_id=faculty.faculty_id and application.application_id=NEW.application_id;
@@ -16,6 +19,8 @@ if NEW.action_taken ='backward' then
     select into holder_post sender from application_route where application_route.receiver=NEW.post;
   end if;
 elseif NEW.action_taken = 'submitted' and NEW.post <> 'Faculty' Then
+  holder_post = 'Director';
+elseif fac_post_orig <> 'Faculty' then
   holder_post = 'Director';
 else
   select into holder_post receiver from application_route where application_route.sender=NEW.post;
