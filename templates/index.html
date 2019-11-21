@@ -263,17 +263,28 @@
 			<button type="button" onclick="location.href = 'editinfo';">EditProfile</button>
 		</div>
 	</div>
-	
-	{% for i in range(0, ap.len_applist) %}
-              {% set name = ap.applications[i][0] %}
-              {% set app = ap.applications[i][1] %}
-	      <div class="content">
-              <label style="width:60%; height:10%; margin-left: 50px;">
-		{{ name }}
-		<input lable='comment' style="width:60%; height:10%; type="text" class="name" value="{{app[0][2]}}" name='comment'>
-		</label><br>
-              </div> 
-	  {%endfor%}
+	<div class="entry">
+	<h2>Pending Applications</h2><br>
+	{% if ap.len_applist==0 %}
+	       <p>None</p>
+	{% else %}
+		{% for i in range(0, ap.len_applist) %}
+		      {% set name = ap.applications[i][0] %}
+		      {% set app = ap.applications[i][1] %}
+		      <form id= "{{app[0][0]}}" action=/handleapplication method='POST' enctype='multipart/form-data'>
+		      <div class="content">
+		      <label style="width:60%; height:10%; margin-left: 50px;">
+			{{ name }}
+			<input id= "{{app[0][0]}}" lable='comment' style="width:60%; height:10%; type="text" class="name" value="{{app[0][2]}}" name='comment'>
+			</label>
+			<input id= "{{app[0][0]}}" lable='app_id' type="hidden" class="name" value="{{app[0][1]}}" name='app_id'>
+			 <input style="width:60%; height:10%; margin-left: 50px;" type = "submit" name = "button_1" value="forward">
+			  <input style="width:60%; height:10%; margin-left: 50px;" type = "submit" name = "button_2" value="backward">
+		 
+		  	</form>
+		  	 {%endfor%}
+	{% endif %}
+	  </div>
 
         <!-- Begin 4th Row -->
 <!--        <div class="entry">
