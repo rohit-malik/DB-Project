@@ -5,8 +5,14 @@ holder_dept int;
 holder_id int;
 status VARCHAR;
 BEGIN
-if NEW.action_taken ='backward' then
-  select into holder_post sender from application_route where application_route.receiver=NEW.post;
+if NEW.action_taken ='Backward' then
+  if NEW.post = 'Director' Then
+    select into holder_post faculty.post from application, faculty where application.faculty_id=faculty.faculty_id and application.application_id=NEW.application_id;
+  else
+    select into holder_post sender from application_route where application_route.receiver=NEW.post;
+  end if;
+elseif NEW.action_taken = 'Submitted' and NEW.post <> 'Faculty' Then
+  holder_post = 'Director';
 else
   select into holder_post receiver from application_route where application_route.sender=NEW.post;
 end if;
@@ -29,3 +35,16 @@ LANGUAGE PLPGSQL;
 
 CREATE TRIGGER app_status AFTER INSERT ON application_log
 FOR EACH ROW EXECUTE PROCEDURE appstatus();
+
+CREATE OR REPLACE FUNCTION updatehod(dept_name_ch text, faculty_id_ch int) RETURNS void AS $$
+DECLARE
+dept_id_ch int;
+old_faculty int;
+BEGIN
+  select into dept_id_ch department_id from department where dept_name=dept_name_ch;
+  select into old_faculty faculty_id from hod_logs where dept_id=dept_id_ch;
+  UPDATE hod_logs set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
+  UPDATE hod_logs set end_date=NOW() where faculty_id=old_faculty;
+  INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
+END; $$
+LANGUAGE PLPGSQL;

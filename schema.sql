@@ -115,4 +115,3 @@ INSERT INTO department(department_id, dept_name) VALUES(3,'EE');
 
 INSERT INTO application_route(sender, receiver) VALUES('Faculty','HOD');
 INSERT INTO application_route(sender, receiver) VALUES('HOD','DeanFA');
-INSERT INTO application_route(sender, receiver) VALUES('DeanFA','Director');_
