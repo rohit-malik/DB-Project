@@ -3,7 +3,7 @@ DECLARE
 holder_post VARCHAR;
 holder_dept int;
 holder_id int;
-status VARCHAR;
+status_i VARCHAR;
 cur_status_id int;
 BEGIN
 if NEW.action_taken ='backward' then
@@ -17,22 +17,24 @@ elseif NEW.action_taken = 'submitted' and NEW.post <> 'Faculty' Then
 else
   select into holder_post receiver from application_route where application_route.sender=NEW.post;
 end if;
-if holder_post = NULL Then
-  status = 'Passed';
+if not found Then
+  status_i = 'Passed';
 else
-  status = 'Pending';
+  status_i = 'Pending';
 end if;
 if holder_post = 'HOD' then
   select into holder_dept faculty.department_id from application, faculty, application_log where application_log.application_id=application.application_id and application.faculty_id=faculty.faculty_id and application_log.application_id=NEW.application_id;
   select into holder_id hod.faculty_id from hod where hod.dept_id = holder_dept;
+elseif holder_post = 'Faculty' then
+	select into holder_id faculty_id from application where application_id=NEW.application_id;
 else
   select into holder_id special_posts.faculty_id from special_posts where special_posts.post=holder_post;
 END if;
 select into cur_status_id status_id from current_status where current_status.status_id=NEW.application_id;
-if cur_status_id = NULL Then
-  INSERT INTO current_status(status_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
+if not found Then
+  INSERT INTO current_status(status_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status_i,0);
 else
-  UPDATE current_status set current_holder_post=holder_post, current_holder_id=holder_id, status=status where status_id=cur_status_id;
+  UPDATE current_status set current_holder_post=holder_post, current_holder_id=holder_id, status=status_i where status_id=cur_status_id;
 end if;
 RETURN NEW;
 END; $$
