@@ -263,6 +263,17 @@
 			<button type="button" onclick="location.href = 'editinfo';">EditProfile</button>
 		</div>
 	</div>
+	
+	{% for i in range(0, ap.len_applist) %}
+              {% set name = ap.applications[i][0] %}
+              {% set app = ap.applications[i][1] %}
+	      <div class="content">
+              <label style="width:60%; height:10%; margin-left: 50px;">
+		{{ name }}
+		<input lable='comment' style="width:60%; height:10%; type="text" class="name" value="{{app[0][2]}}" name='comment'>
+		</label><br>
+              </div> 
+	  {%endfor%}
 
         <!-- Begin 4th Row -->
 <!--        <div class="entry">

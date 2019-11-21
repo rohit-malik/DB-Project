@@ -66,7 +66,9 @@ class RegForm(FlaskForm):
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=20)])
 
 
-
+class Allapplications():
+    len_applist = 0
+    applications = []
 
 class Facultyprofile():
     name = ""
@@ -144,9 +146,53 @@ def login():
 def dashboard():
     form = FacultyDetails()
     fp = Facultyprofile()
+    ap = Allapplications()
+    temp_list = []
     faculty = facultys.find_one({'Email': current_user.useremail})
     if faculty is None:
         return redirect(url_for('editinfo'))
+    try:
+        connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+        sql = """select faculty_id,name from faculty where faculty.email = %s"""
+        records = (current_user.useremail,)
+        #print("inside the try")
+        conn = psycopg2.connect(connect_str)
+        cursor = conn.cursor()
+        cursor.execute(sql,records)
+        row = cursor.fetchone()
+        faculty_id = int(row[0])
+        name = row[1]
+        
+        sql = """SELECT * from current_status WHERE current_holder_id=%s"""
+        records = (faculty_id,)
+        cursor.execute(sql,records)
+        row = cursor.fetchall()
+        if len(row)!=0:
+            print("There are applications pending for this Faculty : ",name)
+            print(row)
+            for each in row:
+                app_id = each[0]
+                sql = """SELECT * from application_log WHERE application_id=%s"""
+                records = (app_id,)
+                cursor.execute(sql,records)
+                apps = cursor.fetchall()
+                #ap.applications = apps
+                #ap.len_applist = len(apps)
+                print("the applications corresponding",apps)
+                sql = """select faculty.name from faculty, application where faculty.faculty_id=application.faculty_id and application.application_id=%s"""
+                cursor.execute(sql,records)
+                name = cursor.fetchone()[0]
+                temp_list.append((name,apps))
+        conn.commit() # <--- makes sure the change is shown in the database
+        cursor.close()
+        conn.close()
+        ap.applications = temp_list
+        ap.len_applist = len(temp_list)
+        print("This is final list for HOD : ",temp_list)
+    except Exception as e:
+        print("Uh oh, can't connect. Invalid dbname, user or password?")
+        print(e)
     fp.name = faculty['Name']
     fp.email = faculty['Email']
     fp.department = faculty['Department']
@@ -173,9 +219,9 @@ def dashboard():
         #ppic = BSON.decode(ppic_binary)
         # ppic = ppic_binary
         #print(ppic)
-        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area),profile_pic=ppic, form=form,fp=fp)
+        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area),profile_pic=ppic, form=form,fp=fp,ap=ap)
     else:
-        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area), profile_pic="", form=form,fp=fp)
+        return render_template('index.html', name=faculty['Name'], Department=faculty['Department'],Email=faculty['Email'],Phone_No=faculty['Phone-No'],Website=faculty['Website'],About_me=faculty['About-me'],Research_area=list_research_area,len_research_area=len(list_research_area), profile_pic="", form=form,fp=fp,ap=ap)
 
 @app.route('/leaveapplication', methods=['GET', 'POST'])
 @login_required
@@ -193,7 +239,7 @@ def leavapplication():
                   "password='toor'"
             sql = """select faculty_id,post from faculty where faculty.email = %s"""
             records = (current_user.useremail,)
-            #print("inside the try")
+            print("inside the try")
             conn = psycopg2.connect(connect_str)
 
             cursor = conn.cursor()
@@ -202,13 +248,13 @@ def leavapplication():
             row = cursor.fetchone()
             faculty_id = int(row[0])
             post = row[1]
-            sql = """INSERT INTO application(faculty_id,start_date,end_date) VALUES(%s,%s,%s) RETURNING application_id"""
+            sql = """INSERT INTO application(faculty_id,start_date,end_date) VALUES(%s,%s,%s) RETURNING application_id;"""
             #print(row)
-            records = (int(row[0]),startdate,enddate)
+            records = (faculty_id,startdate,enddate)
             cursor.execute(sql,records)
 
-            application_id = int(cursor.fetchone()[0])
-
+            application_id = cursor.fetchone()[0]
+            print("This is application id = ",application_id)
             sql = """INSERT INTO application_log(application_id,comment,post,date_of_comment,action_taken) VALUES(%s,%s,%s,%s,%s)"""
             #print(row)
             records = (application_id,comments,post,dt.now(),"submitted")
@@ -291,7 +337,7 @@ def editinfo():
                 cursor.close()
                 conn.close()
             except Exception as e:
-                print("Uh oh, can't connect. Invalid dbname, user or password?")
+                print("Uh oh, ********* can't connect. Invalid dbname, user or password?")
                 print(e)
         else:
             facultys.update({'_id': faculty['_id']}, {
@@ -314,7 +360,7 @@ def editinfo():
                 connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
                   "password='toor'"
                 dep_dic = {"CSE":1,"ME":2,"EE":3}
-                sql = """UPDATE faculty SET department_id = %s WHERE email = %s"""
+                sql = """UPDATE Faculty SET department_id = %s WHERE email = %s"""
                 records = (dep_dic[dept],current_user.useremail)
                 conn = psycopg2.connect(connect_str)
 
