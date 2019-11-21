@@ -43,8 +43,14 @@ old_faculty int;
 BEGIN
   select into dept_id_ch department_id from department where dept_name=dept_name_ch;
   select into old_faculty faculty_id from hod_logs where dept_id=dept_id_ch;
-  UPDATE hod_logs set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
+  if old_faculty = NULL Then
+    INSERT INTO hod(faculty_id, dept_id) values(faculty_id_ch, dept_id_ch);
+    INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
+    UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
+  end if;
+  UPDATE hod set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
   UPDATE hod_logs set end_date=NOW() where faculty_id=old_faculty;
+  UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
   INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
 END; $$
 LANGUAGE PLPGSQL;
