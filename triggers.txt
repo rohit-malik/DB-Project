@@ -4,6 +4,7 @@ holder_post VARCHAR;
 holder_dept int;
 holder_id int;
 status VARCHAR;
+cur_status_id int;
 BEGIN
 if NEW.action_taken ='backward' then
   if NEW.post = 'Director' Then
@@ -27,7 +28,12 @@ if holder_post = 'HOD' then
 else
   select into holder_id special_posts.faculty_id from special_posts where special_posts.post=holder_post;
 END if;
-INSERT INTO current_status(status_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
+select into cur_status_id status_id from current_status where current_status.status_id=NEW.application_id;
+if cur_status_id = NULL Then
+  INSERT INTO current_status(status_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
+else
+  UPDATE current_status set current_holder_post=holder_post, current_holder_id=holder_id, status=status where status_id=cur_status_id;
+end if;
 RETURN NEW;
 END; $$
 LANGUAGE PLPGSQL;
