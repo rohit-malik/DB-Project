@@ -18,9 +18,11 @@ if NEW.action_taken ='backward' then
   else
     select into holder_post sender from application_route where application_route.receiver=NEW.post;
   end if;
+elseif NEW.post = 'Director' Then
+  holder_post = 'DBAdmin'
 elseif NEW.action_taken = 'submitted' and NEW.post <> 'Faculty' Then
   holder_post = 'Director';
-elseif fac_post_orig <> 'Faculty' then
+elseif fac_post_orig = 'HOD' or fac_post_orig='DeanFA' or fac_post_orig='DeanAFA' then
   holder_post = 'Director';
 else
   select into holder_post receiver from application_route where application_route.sender=NEW.post;
@@ -29,6 +31,10 @@ if not found Then
   status_i = 'Passed';
 else
   status_i = 'Pending';
+end if;
+
+if holder_post='DBAdmin' Then
+  status_i = 'Passed';
 end if;
 
 if status_i = 'Passed' Then
