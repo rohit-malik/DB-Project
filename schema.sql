@@ -40,7 +40,7 @@ CREATE TABLE Application(
 );
 
 CREATE TABLE Current_Status(
-  status_id SERIAL PRIMARY KEY NOT NULL,
+  status_id int PRIMARY KEY NOT NULL,
   current_holder_post varchar(50),
   current_holder_id int,
   status varchar(50),
@@ -108,4 +108,4 @@ INSERT INTO Department(department_id, dept_name) VALUES(3,'EE');
 
 INSERT INTO Application_route(sender, receiver) VALUES('Faculty','HOD');
 INSERT INTO Application_route(sender, receiver) VALUES('HOD','DeanFA');
-INSERT INTO Application_route(sender, receiver) VALUES('DeanFA','Director');
+INSERT INTO Application_route(sender, receiver) VALUES('DeanFA','Director');_

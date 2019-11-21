@@ -1,7 +1,24 @@
 CREATE FUNCTION appstatus() RETURNS TRIGGER AS $$
+DECLARE
+holder_post VARCHAR;
+holder_dept int;
+holder_id int;
+status VARCHAR;
 BEGIN
-
-RETURN val + 1;
+select into holder_post receiver from Application_route where Application_route.sender=NEW.post;
+if holder_post==NULL Then
+  status = "Passed";
+else
+  status = "Pending";
+end if;
+if holder_post=="HOD" then
+  select into holder_dept Faculty.dept_id from Application, Faculty, Application_log where Application_log.application_id=Application.application_id and Application.faculty_id=Faculty.faculty_id Application_log.application_id=NEW.application_id;
+  select into holder_id HOD.faculty_id from HOD where HOD.dept_id = holder_dept;
+else
+  holder_id = select from Special_posts where Special_posts.post=holder_post;
+END if;
+INSERT INTO Currente_Status(current_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
+RETURN NEW;
 END; $$
 LANGUAGE PLPGSQL;
 
