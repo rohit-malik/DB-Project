@@ -5,23 +5,27 @@ holder_dept int;
 holder_id int;
 status VARCHAR;
 BEGIN
-select into holder_post receiver from Application_route where Application_route.sender=NEW.post;
+if NEW.action_taken=="backward" then
+  select into holder_post sender from application_route where application_route.receiver=NEW.post;
+else
+  select into holder_post receiver from application_route where application_route.sender=NEW.post;
+end if
 if holder_post==NULL Then
   status = "Passed";
 else
   status = "Pending";
 end if;
 if holder_post=="HOD" then
-  select into holder_dept Faculty.dept_id from Application, Faculty, Application_log where Application_log.application_id=Application.application_id and Application.faculty_id=Faculty.faculty_id Application_log.application_id=NEW.application_id;
-  select into holder_id HOD.faculty_id from HOD where HOD.dept_id = holder_dept;
+  select into holder_dept faculty.dept_id from application, faculty, application_log where application_log.application_id=application.application_id and application.faculty_id=faculty.faculty_id and application_log.application_id=NEW.application_id;
+  select into holder_id hod.faculty_id from hod where hod.dept_id = holder_dept;
 else
-  holder_id = select from Special_posts where Special_posts.post=holder_post;
+  holder_id = select from special_posts where special_posts.post=holder_post;
 END if;
-INSERT INTO Currente_Status(current_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
+INSERT INTO current_status(current_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
 RETURN NEW;
 END; $$
 LANGUAGE PLPGSQL;
 
 
-CREATE TRIGGER app_status AFTER INSERT ON Application_log
+CREATE TRIGGER app_status AFTER INSERT ON application_log
 FOR EACH ROW EXECUTE PROCEDURE appstatus();
