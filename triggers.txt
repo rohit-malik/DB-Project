@@ -51,15 +51,36 @@ old_faculty int;
 BEGIN
   select into dept_id_ch department_id from department where dept_name=dept_name_ch;
   select into old_faculty faculty_id from hod_logs where dept_id=dept_id_ch;
-  if old_faculty = NULL Then
+  if not found Then
     INSERT INTO hod(dept_id,faculty_id) values(dept_id_ch, faculty_id_ch);
     INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
     UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
+  else
+    UPDATE hod set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
+    UPDATE hod_logs set end_date=NOW() where faculty_id=old_faculty;
+    UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
+    UPDATE faculty set post='Faculty' where faculty_id=old_faculty;
+    INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
   end if;
-  UPDATE hod set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
-  UPDATE hod_logs set end_date=NOW() where faculty_id=old_faculty;
-  UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
-  UPDATE faculty set post='Faculty' where faculty_id=old_faculty;
-  INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
+END; $$
+LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION updatespecialpost(special_post_name text, faculty_id_ch int) RETURNS void AS $$
+DECLARE
+old_faculty int;
+BEGIN
+  select into old_faculty faculty_id from special_posts where post=special_post_name;
+  if not found Then
+    INSERT INTO special_posts(faculty_id, post) values(faculty_id_ch, special_post_name);
+    INSERT INTO special_logs(faculty_id, post, start_date) values(faculty_id_ch, special_post_name, NOW());
+    UPDATE faculty set post=special_post_name where faculty_id=faculty_id_ch;
+  else
+    UPDATE special_posts set faculty_id=faculty_id_ch where post=special_post_name;
+    UPDATE special_logs set end_date=NOW() where faculty_id=old_faculty;
+    UPDATE faculty set post=special_post_name where faculty_id=faculty_id_ch;
+    UPDATE faculty set post='Faculty' where faculty_id=old_faculty;
+    INSERT INTO special_logs(faculty_id, post, start_date) values(faculty_id_ch, special_post_name, NOW());
+  end if;
 END; $$
 LANGUAGE PLPGSQL;
