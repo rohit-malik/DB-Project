@@ -115,3 +115,5 @@ INSERT INTO department(department_id, dept_name) VALUES(3,'EE');
 
 INSERT INTO application_route(sender, receiver) VALUES('Faculty','HOD');
 INSERT INTO application_route(sender, receiver) VALUES('HOD','DeanFA');
+
+INSERT INTO posts(post_id, post_name) VALUES(6,'DBAdmin');
