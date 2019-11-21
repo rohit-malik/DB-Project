@@ -106,3 +106,19 @@ BEGIN
   end if;
 END; $$
 LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION checkapplication() RETURNS TRIGGER AS $$
+DECLARE
+old_faculty int;
+BEGIN
+  select into old_faculty faculty_id from application, current_status where application.faculty_id=NEW.faculty_id and application.application_id=current_status.status_id and current_status.status='Pending';
+  if found then
+    RAISE EXCEPTION 'Two Applications cannot be submitted.';
+  end if;
+  RETURN NEW;
+END; $$
+LANGUAGE PLPGSQL;
+
+CREATE TRIGGER check_application BEFORE INSERT ON application
+FOR EACH ROW EXECUTE PROCEDURE appstatus();
