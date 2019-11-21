@@ -5,6 +5,9 @@ holder_dept int;
 holder_id int;
 status_i VARCHAR;
 cur_status_id int;
+time_sec int;
+time_days int;
+fac_id_orig int;
 BEGIN
 if NEW.action_taken ='backward' then
   if NEW.post = 'Director' Then
@@ -22,6 +25,14 @@ if not found Then
 else
   status_i = 'Pending';
 end if;
+
+if status_i = 'Passed' Then
+  SELECT into time_sec EXTRACT(EPOCH FROM (end_date - start_date)) from application where application_id=NEW.application_id;
+  time_days = time_sec/86400;
+  select into fac_id_orig faculty_id from application where application_id=NEW.application_id;
+  UPDATE faculty set leaves_remaining=leaves_remaining-time_days where faculty_id=fac_id_orig;
+end if;
+
 if holder_post = 'HOD' then
   select into holder_dept faculty.department_id from application, faculty, application_log where application_log.application_id=application.application_id and application.faculty_id=faculty.faculty_id and application_log.application_id=NEW.application_id;
   select into holder_id hod.faculty_id from hod where hod.dept_id = holder_dept;
@@ -51,15 +62,36 @@ old_faculty int;
 BEGIN
   select into dept_id_ch department_id from department where dept_name=dept_name_ch;
   select into old_faculty faculty_id from hod_logs where dept_id=dept_id_ch;
-  if old_faculty = NULL Then
+  if not found Then
     INSERT INTO hod(dept_id,faculty_id) values(dept_id_ch, faculty_id_ch);
     INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
     UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
+  else
+    UPDATE hod set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
+    UPDATE hod_logs set end_date=NOW() where faculty_id=old_faculty;
+    UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
+    UPDATE faculty set post='Faculty' where faculty_id=old_faculty;
+    INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
   end if;
-  UPDATE hod set faculty_id=faculty_id_ch where dept_id=dept_id_ch;
-  UPDATE hod_logs set end_date=NOW() where faculty_id=old_faculty;
-  UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
-  UPDATE faculty set post='Faculty' where faculty_id=old_faculty;
-  INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
+END; $$
+LANGUAGE PLPGSQL;
+
+
+CREATE OR REPLACE FUNCTION updatespecialpost(special_post_name text, faculty_id_ch int) RETURNS void AS $$
+DECLARE
+old_faculty int;
+BEGIN
+  select into old_faculty faculty_id from special_posts where post=special_post_name;
+  if not found Then
+    INSERT INTO special_posts(faculty_id, post) values(faculty_id_ch, special_post_name);
+    INSERT INTO special_logs(faculty_id, post, start_date) values(faculty_id_ch, special_post_name, NOW());
+    UPDATE faculty set post=special_post_name where faculty_id=faculty_id_ch;
+  else
+    UPDATE special_posts set faculty_id=faculty_id_ch where post=special_post_name;
+    UPDATE special_logs set end_date=NOW() where faculty_id=old_faculty;
+    UPDATE faculty set post=special_post_name where faculty_id=faculty_id_ch;
+    UPDATE faculty set post='Faculty' where faculty_id=old_faculty;
+    INSERT INTO special_logs(faculty_id, post, start_date) values(faculty_id_ch, special_post_name, NOW());
+  end if;
 END; $$
 LANGUAGE PLPGSQL;
