@@ -1,27 +1,27 @@
-CREATE FUNCTION appstatus() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION appstatus() RETURNS TRIGGER AS $$
 DECLARE
 holder_post VARCHAR;
 holder_dept int;
 holder_id int;
 status VARCHAR;
 BEGIN
-if NEW.action_taken=="backward" then
+if NEW.action_taken ='backward' then
   select into holder_post sender from application_route where application_route.receiver=NEW.post;
 else
   select into holder_post receiver from application_route where application_route.sender=NEW.post;
-end if
-if holder_post==NULL Then
-  status = "Passed";
-else
-  status = "Pending";
 end if;
-if holder_post=="HOD" then
-  select into holder_dept faculty.dept_id from application, faculty, application_log where application_log.application_id=application.application_id and application.faculty_id=faculty.faculty_id and application_log.application_id=NEW.application_id;
+if holder_post = NULL Then
+  status = 'Passed';
+else
+  status = 'Pending';
+end if;
+if holder_post = 'HOD' then
+  select into holder_dept faculty.department_id from application, faculty, application_log where application_log.application_id=application.application_id and application.faculty_id=faculty.faculty_id and application_log.application_id=NEW.application_id;
   select into holder_id hod.faculty_id from hod where hod.dept_id = holder_dept;
 else
-  holder_id = select from special_posts where special_posts.post=holder_post;
+  select into holder_id special_posts.faculty_id from special_posts where special_posts.post=holder_post;
 END if;
-INSERT INTO current_status(current_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
+INSERT INTO current_status(status_id, current_holder_post, current_holder_id, status, borrowed_leaves) values (NEW.application_id, holder_post, holder_id,status,0);
 RETURN NEW;
 END; $$
 LANGUAGE PLPGSQL;

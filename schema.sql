@@ -16,7 +16,7 @@ CREATE TABLE faculty(
   name varchar(50) NOT NULL,
   email varchar(50) NOT NULL UNIQUE,
   department_id int NOT NULL,
-  post varchar(50),
+  post varchar(50) NOT NULL,
   join_date timestamp,
   leave_date timestamp,
   leaves_remaining int,
@@ -58,9 +58,9 @@ CREATE TABLE application_log(
   log_id SERIAL NOT NULL PRIMARY KEY,
   application_id int NOT NULL,
   comment varchar(100),
-  post varchar(50),
+  post varchar(50) NOT NULL,
   date_of_comment timestamp,
-  action_taken varchar(50),
+  action_taken varchar(50) NOT NULL,
   FOREIGN KEY(application_id) REFERENCES application(application_id),
   FOREIGN KEY(post) REFERENCES posts(post_name)
 );
@@ -90,7 +90,7 @@ CREATE TABLE special_logs(
 DROP TABLE IF EXISTS special_posts;
 CREATE TABLE special_posts(
   faculty_id int NOT NULL,
-  post varchar(50) PRIMARY KEY,
+  post varchar(50) PRIMARY KEY NOT NULL,
   FOREIGN KEY(faculty_id) REFERENCES faculty(faculty_id),
   FOREIGN KEY(post) REFERENCES posts(post_name)
 );
