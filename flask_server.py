@@ -141,6 +141,57 @@ def login():
     return render_template('login.html', form=form)
 
 
+@app.route('/handleapplication' , methods=['GET', 'POST'])
+@login_required
+def handleapplication():
+    status = ''
+    if request.method == 'POST':
+        print(list(request.form.keys()))
+        action = list(request.form.keys())[2]
+        app_id = request.form['app_id']
+        comment = request.form['comment']
+        post = ''
+        try:
+            connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+            sql = """SELECT post FROM faculty WHERE faculty.email=%s"""
+            records = (current_user.useremail,)
+            conn = psycopg2.connect(connect_str)
+            cursor = conn.cursor()
+            cursor.execute(sql,records)
+            post = cursor.fetchone()[0]
+            print("this is the post for this faculty",post)
+            conn.commit() # <--- makes sure the change is shown in the database
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print("Uh oh, can't connect. Invalid dbname, user or password? can't get post from email")
+            print(e)
+        print("this is action:",action)
+        if(action == 'button_1'):
+            print(request.form['comment'],"forwad",app_id)
+            status = "forward"
+        elif(action == 'button_2'):
+            print(request.form['comment'],"backward",app_id)
+            status = "backward"
+        try:
+            connect_str = "dbname='facultyportal' user='matt' host='localhost' " + \
+                  "password='toor'"
+            sql = """INSERT INTO application_log(application_id,comment,post,date_of_comment,action_taken) VALUES(%s,%s,%s,%s,%s)"""
+            records = (app_id,comment,post,dt.now(),status)
+            conn = psycopg2.connect(connect_str)
+            cursor = conn.cursor()
+            cursor.execute(sql,records)
+            conn.commit() # <--- makes sure the change is shown in the database
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            print("Uh oh, can't connect. Invalid dbname, user or password? can't insert into app log table")
+            print(e)
+    return redirect('/dashboard')
+
+
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
