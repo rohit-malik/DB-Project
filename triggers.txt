@@ -5,13 +5,13 @@ holder_dept int;
 holder_id int;
 status VARCHAR;
 BEGIN
-if NEW.action_taken ='Backward' then
+if NEW.action_taken ='backward' then
   if NEW.post = 'Director' Then
     select into holder_post faculty.post from application, faculty where application.faculty_id=faculty.faculty_id and application.application_id=NEW.application_id;
   else
     select into holder_post sender from application_route where application_route.receiver=NEW.post;
   end if;
-elseif NEW.action_taken = 'Submitted' and NEW.post <> 'Faculty' Then
+elseif NEW.action_taken = 'submitted' and NEW.post <> 'Faculty' Then
   holder_post = 'Director';
 else
   select into holder_post receiver from application_route where application_route.sender=NEW.post;
@@ -44,7 +44,7 @@ BEGIN
   select into dept_id_ch department_id from department where dept_name=dept_name_ch;
   select into old_faculty faculty_id from hod_logs where dept_id=dept_id_ch;
   if old_faculty = NULL Then
-    INSERT INTO hod(faculty_id, dept_id) values(faculty_id_ch, dept_id_ch);
+    INSERT INTO hod(dept_id,faculty_id) values(dept_id_ch, faculty_id_ch);
     INSERT INTO hod_logs(faculty_id,dept_id,start_date) values(faculty_id_ch, dept_id_ch, NOW());
     UPDATE faculty set post='HOD' where faculty_id=faculty_id_ch;
   end if;
